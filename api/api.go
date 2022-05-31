@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/jxlwqq/chainbase-client-go"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -12,14 +13,15 @@ const defaultBaseURL = "https://api.chainbase.online/v1/"
 
 type Client struct {
 	httpClient *http.Client
-	ChainID    int
+	ChainID    chainbase.ChainID
 	APIKey     string
 }
 
 type Response struct {
-	Code    int32           `json:"code"`
-	Message string          `json:"message"`
-	Data    json.RawMessage `json:"data"`
+	Code     int32           `json:"code"`
+	Message  string          `json:"message"`
+	Data     json.RawMessage `json:"data"`
+	NextPage int             `json:"next_page"`
 }
 
 type Pagination struct {
@@ -34,8 +36,7 @@ type BasicFilters struct {
 	ToBlock       int64 `json:"to_block"`
 }
 
-func New(httpClient *http.Client, chainID int, apiKey string) *Client {
-
+func New(httpClient *http.Client, chainID chainbase.ChainID, apiKey string) *Client {
 	return &Client{
 		httpClient: httpClient,
 		ChainID:    chainID,
@@ -43,11 +44,11 @@ func New(httpClient *http.Client, chainID int, apiKey string) *Client {
 	}
 }
 
-func (c *Client) MakeURL(endpoint string, parameters map[string]string, pagination Pagination, filters BasicFilters) (*url.URL, error) {
+func (c *Client) MakeURL(endpoint string, parameters map[string]string, pagination *Pagination, filters *BasicFilters) (*url.URL, error) {
 	u, _ := url.Parse(defaultBaseURL + endpoint)
 
 	q := u.Query()
-	q.Set("chain_id", strconv.Itoa(c.ChainID))
+	q.Set("chain_id", c.ChainID.String())
 
 	for k, v := range parameters {
 		q.Set(k, v)
