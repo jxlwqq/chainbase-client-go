@@ -2,10 +2,12 @@ package ethereum
 
 import "github.com/jxlwqq/chainbase-client-go/api"
 
-type Client struct {
+type Client interface {
+}
+type client struct {
 	apiClient *api.Client
 }
 
-func New(apiClient *api.Client) *Client {
-	return &Client{apiClient}
+func New(apiClient *api.Client) Client {
+	return &client{apiClient}
 }

@@ -2,37 +2,46 @@ package nft
 
 import "github.com/jxlwqq/chainbase-client-go/api"
 
-type Client struct {
+type Client interface {
+	SearchNFTs()
+	GetAccountNFTs()
+	GetNFTTransfers()
+	GetNFTMetadata()
+	GetNFTOwner()
+	GetNFTOwnerHistory()
+	GetNFTFloorPrice()
+}
+type client struct {
 	apiClient *api.Client
 }
 
-func New(apiClient *api.Client) *Client {
-	return &Client{apiClient}
+func New(apiClient *api.Client) Client {
+	return &client{apiClient}
 }
 
-func (c *Client) SearchNFTs() {
-
-}
-
-func (c *Client) GetAccountNFTs() {
-}
-
-func (c *Client) GetNFTTransfers() {
+func (c *client) SearchNFTs() {
 
 }
 
-func (c *Client) GetNFTMetadata() {
+func (c *client) GetAccountNFTs() {
+}
+
+func (c *client) GetNFTTransfers() {
 
 }
 
-func (c *Client) GetNFTOwner() {
+func (c *client) GetNFTMetadata() {
 
 }
 
-func (c *Client) GetNFTOwnerHistory() {
+func (c *client) GetNFTOwner() {
 
 }
 
-func (c *Client) GetNFTFloorPrice() {
+func (c *client) GetNFTOwnerHistory() {
+
+}
+
+func (c *client) GetNFTFloorPrice() {
 
 }

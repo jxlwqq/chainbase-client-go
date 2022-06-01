@@ -33,13 +33,13 @@ const (
 )
 
 type Client struct {
-	Basic    *basic.Client
-	NFT      *nft.Client
-	Token    *token.Client
-	Domain   *domain.Client
-	Ethereum *ethereum.Client
-	Polygon  *polygon.Client
-	BSC      *bsc.Client
+	Basic    basic.Client
+	NFT      nft.Client
+	Token    token.Client
+	Domain   domain.Client
+	Ethereum ethereum.Client
+	Polygon  polygon.Client
+	BSC      bsc.Client
 }
 
 func New(httpClient *http.Client, chainID ChainID, apiKey string) *Client {

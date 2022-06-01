@@ -6,12 +6,18 @@ import (
 	"time"
 )
 
-type Client struct {
+type Client interface {
+	GetENSRecords(domain string) (*ENSRecord, error)
+	GetENSReverse(address string) ([]ENSRecord, error)
+	GetAccountENS(address string) ([]ENSRecord, error)
+}
+
+type client struct {
 	apiClient *api.Client
 }
 
-func New(apiClient *api.Client) *Client {
-	return &Client{
+func New(apiClient *api.Client) Client {
+	return &client{
 		apiClient: apiClient,
 	}
 }
@@ -27,7 +33,7 @@ type ENSRecord struct {
 	TokenId        string    `json:"token_id"`
 }
 
-func (c *Client) GetENSRecords(domain string) (*ENSRecord, error) {
+func (c *client) GetENSRecords(domain string) (*ENSRecord, error) {
 	endpoint := "ens/records"
 	params := make(map[string]string)
 	params["domain"] = domain
@@ -42,7 +48,7 @@ func (c *Client) GetENSRecords(domain string) (*ENSRecord, error) {
 
 }
 
-func (c *Client) GetENSReverse(address string) ([]ENSRecord, error) {
+func (c *client) GetENSReverse(address string) ([]ENSRecord, error) {
 
 	endpoint := "ens/reverse"
 	params := make(map[string]string)
@@ -58,7 +64,7 @@ func (c *Client) GetENSReverse(address string) ([]ENSRecord, error) {
 	return ensRecords, err
 }
 
-func (c *Client) GetAccountENS(address string) ([]ENSRecord, error) {
+func (c *client) GetAccountENS(address string) ([]ENSRecord, error) {
 
 	endpoint := "account/ens"
 	params := make(map[string]string)

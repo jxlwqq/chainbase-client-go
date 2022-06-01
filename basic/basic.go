@@ -7,12 +7,19 @@ import (
 	"time"
 )
 
-type Client struct {
+type Client interface {
+	GetLastBlock() (*LastBlock, error)
+	GetBlockDetail(number big.Int) (*BlockDetail, error)
+	GetAddressGasFee(address string, pagination *api.Pagination, filters *api.BasicFilters) ([]*AddressGasFee, int, error)
+	GetContractEvents(contractAddress string, pagination *api.Pagination, filters *api.BasicFilters) ([]*ContractEvent, int, error)
+}
+
+type client struct {
 	apiClient *api.Client
 }
 
-func New(apiClient *api.Client) *Client {
-	return &Client{
+func New(apiClient *api.Client) Client {
+	return &client{
 		apiClient: apiClient,
 	}
 }
@@ -22,7 +29,7 @@ type LastBlock struct {
 	Hash   string
 }
 
-func (c *Client) GetLastBlock() (*LastBlock, error) {
+func (c *client) GetLastBlock() (*LastBlock, error) {
 
 	endpoint := "block/number/latest"
 
@@ -61,7 +68,7 @@ type BlockDetail struct {
 	ChainId           int       `json:"chain_id"`
 }
 
-func (c *Client) GetBlockDetail(number big.Int) (*BlockDetail, error) {
+func (c *client) GetBlockDetail(number big.Int) (*BlockDetail, error) {
 
 	endpoint := "block/detail"
 
@@ -84,7 +91,7 @@ type AddressGasFee struct {
 	Fee             uint64  `json:"fee"`
 }
 
-func (c *Client) GetAddressGasFee(address string, pagination *api.Pagination, filters *api.BasicFilters) ([]*AddressGasFee, int, error) {
+func (c *client) GetAddressGasFee(address string, pagination *api.Pagination, filters *api.BasicFilters) ([]*AddressGasFee, int, error) {
 
 	endpoint := "account/fees/history"
 
@@ -109,7 +116,7 @@ type ContractEvent struct {
 	Function         string  `json:"function"`
 }
 
-func (c *Client) GetContractEvents(contractAddress string, pagination *api.Pagination, filters *api.BasicFilters) ([]*ContractEvent, int, error) {
+func (c *client) GetContractEvents(contractAddress string, pagination *api.Pagination, filters *api.BasicFilters) ([]*ContractEvent, int, error) {
 
 	endpoint := "contract/events"
 
@@ -127,7 +134,6 @@ func (c *Client) GetContractEvents(contractAddress string, pagination *api.Pagin
 	return contractEvents, resp.NextPage, err
 
 }
-func (c *Client) RunContractFunction() {
+func (c *client) RunContractFunction() {
 	_ = "contract/call"
-
 }

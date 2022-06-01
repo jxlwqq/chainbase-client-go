@@ -5,15 +5,23 @@ import (
 	"time"
 )
 
-type Client struct {
+type Client interface {
+	GetTokenMetadata()
+	GetAccountTokens()
+	GetAccountTransactions()
+	GetTokenHolders()
+	GetTokenPrice()
+	GetTokenPriceHistory()
+}
+type client struct {
 	apiClient *api.Client
 }
 
-func New(apiClient *api.Client) *Client {
-	return &Client{apiClient: apiClient}
+func New(apiClient *api.Client) Client {
+	return &client{apiClient: apiClient}
 }
 
-func (c *Client) GetBalance() {
+func (c *client) GetBalance() {
 	_ = "account/balance"
 }
 
@@ -63,31 +71,31 @@ type Price struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (c *Client) GetTokenMetadata() {
+func (c *client) GetTokenMetadata() {
 	_ = "token/metadata"
 }
 
-func (c *Client) GetAccountTokens() {
+func (c *client) GetAccountTokens() {
 
 	_ = "account/tokens"
 }
 
-func (c *Client) GetAccountTransactions() {
+func (c *client) GetAccountTransactions() {
 
 	_ = "account/txs"
 }
 
-func (c *Client) GetTokenHolders() {
+func (c *client) GetTokenHolders() {
 
 	_ = "token/holders"
 }
 
-func (c *Client) GetTokenPrice() {
+func (c *client) GetTokenPrice() {
 
 	_ = "token/price"
 }
 
-func (c *Client) GetTokenPriceHistory() {
+func (c *client) GetTokenPriceHistory() {
 
 	_ = "token/price/history"
 }
