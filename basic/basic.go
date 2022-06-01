@@ -26,7 +26,7 @@ func New(apiClient *api.Client) Client {
 }
 
 type LastBlock struct {
-	Number int64
+	Number big.Int
 	Hash   string
 }
 

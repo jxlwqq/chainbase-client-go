@@ -10,26 +10,6 @@ import (
 	"github.com/jxlwqq/chainbase-client-go/polygon"
 	"github.com/jxlwqq/chainbase-client-go/token"
 	"net/http"
-	"strconv"
-)
-
-type ChainID int
-
-func (c ChainID) String() string {
-	return strconv.Itoa(int(c))
-}
-
-const (
-	EthereumMainnet ChainID = 1
-	EthereumRinkeby ChainID = 4
-	EthereumGorli   ChainID = 5
-	EthereumKovan   ChainID = 42
-
-	PolygonMainnet       ChainID = 137
-	PolygonMumbaiTestnet ChainID = 80001
-
-	BSCMainnet ChainID = 56
-	BSCTestnet ChainID = 97
 )
 
 type Client struct {
@@ -42,7 +22,7 @@ type Client struct {
 	BSC      bsc.Client
 }
 
-func New(httpClient *http.Client, chainID ChainID, apiKey string) *Client {
+func New(httpClient *http.Client, chainID api.ChainID, apiKey string) *Client {
 	apiClient := api.New(httpClient, chainID, apiKey)
 	return &Client{
 		Basic:    basic.New(apiClient),
