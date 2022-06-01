@@ -12,6 +12,7 @@ type Client interface {
 	GetBlockDetail(number big.Int) (*BlockDetail, error)
 	GetAddressGasFee(address string, pagination *api.Pagination, filters *api.BasicFilters) ([]*AddressGasFee, int, error)
 	GetContractEvents(contractAddress string, pagination *api.Pagination, filters *api.BasicFilters) ([]*ContractEvent, int, error)
+	RunContractFunction()
 }
 
 type client struct {
