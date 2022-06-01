@@ -127,4 +127,7 @@ func (c *Client) GetContractEvents(contractAddress string, pagination *api.Pagin
 	return contractEvents, resp.NextPage, err
 
 }
-func (c *Client) RunContractFunction() {}
+func (c *Client) RunContractFunction() {
+	_ = "contract/call"
+
+}

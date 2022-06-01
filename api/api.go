@@ -2,8 +2,8 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/jxlwqq/chainbase-client-go"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -84,7 +84,15 @@ func (c *Client) MakeURL(endpoint string, parameters map[string]string, paginati
 }
 
 func (c *Client) Get(url string) (*Response, error) {
-	req, _ := http.NewRequest(http.MethodGet, url, http.NoBody)
+	return c.Do(http.MethodGet, url, http.NoBody)
+}
+
+func (c *Client) Post(url string, body io.Reader) (*Response, error) {
+	return c.Do(http.MethodPost, url, body)
+}
+
+func (c *Client) Do(method string, url string, body io.Reader) (*Response, error) {
+	req, _ := http.NewRequest(method, url, body)
 
 	req.Header.Set("Content-Type", "application/json;")
 	req.Header.Set("X-API-KEY", c.APIKey)
@@ -92,7 +100,7 @@ func (c *Client) Get(url string) (*Response, error) {
 	resp, err := c.httpClient.Do(req)
 
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	var response Response
