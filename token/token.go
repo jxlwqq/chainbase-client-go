@@ -7,7 +7,7 @@ import (
 )
 
 type Client interface {
-	GetBalance()
+	GetBalance(address string) (string, error)
 	GetTokenMetadata(contractAddress string) (*Metadata, error)
 	GetAccountTokens(address string) ([]*AccountToken, error)
 	GetAccountTransactions(address string) ([]*AccountTransaction, int, error)
@@ -62,8 +62,28 @@ type AccountTransaction struct {
 	ChainId              int       `json:"chain_id"`
 }
 
-func (c *client) GetBalance() {
-	_ = "account/balance"
+func (c *client) GetBalance(address string) (string, error) {
+	endpoint := "account/balance"
+
+	params := make(map[string]string)
+	params["address"] = address
+
+	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := c.apiClient.Get(url.String())
+	if err != nil {
+		return "", err
+	}
+
+	var balance string
+	err = json.Unmarshal(resp.Data, &balance)
+
+	return balance, nil
+
 }
 
 func (c *client) GetTokenMetadata(contractAddress string) (*Metadata, error) {
