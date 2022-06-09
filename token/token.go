@@ -1,18 +1,19 @@
 package token
 
 import (
+	"encoding/json"
 	"github.com/jxlwqq/chainbase-client-go/api"
 	"time"
 )
 
 type Client interface {
 	GetBalance()
-	GetTokenMetadata()
-	GetAccountTokens()
-	GetAccountTransactions()
-	GetTokenHolders()
-	GetTokenPrice()
-	GetTokenPriceHistory()
+	GetTokenMetadata(contractAddress string) (*Metadata, error)
+	GetAccountTokens(address string) ([]*AccountToken, error)
+	GetAccountTransactions(address string) ([]*AccountTransaction, int, error)
+	GetTokenHolders(contractAddress string) ([]string, error)
+	GetTokenPrice(contractAddress string) (*Price, error)
+	GetTokenPriceHistory(contractAddress string) ([]*Price, error)
 }
 type client struct {
 	apiClient *api.Client
@@ -20,10 +21,6 @@ type client struct {
 
 func New(apiClient *api.Client) Client {
 	return &client{apiClient: apiClient}
-}
-
-func (c *client) GetBalance() {
-	_ = "account/balance"
 }
 
 type Metadata struct {
@@ -65,6 +62,120 @@ type AccountTransaction struct {
 	ChainId              int       `json:"chain_id"`
 }
 
+func (c *client) GetBalance() {
+	_ = "account/balance"
+}
+
+func (c *client) GetTokenMetadata(contractAddress string) (*Metadata, error) {
+	endpoint := "token/metadata"
+
+	params := make(map[string]string)
+	params["contract_address"] = contractAddress
+
+	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.apiClient.Get(url.String())
+	if err != nil {
+		return nil, err
+	}
+
+	var metadata Metadata
+	err = json.Unmarshal(resp.Data, &metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	return &metadata, nil
+}
+
+func (c *client) GetAccountTokens(address string) ([]*AccountToken, error) {
+
+	endpoint := "account/tokens"
+
+	params := make(map[string]string)
+	params["address"] = address
+
+	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.apiClient.Get(url.String())
+	if err != nil {
+		return nil, err
+	}
+
+	var accountTokens []*AccountToken
+	err = json.Unmarshal(resp.Data, &accountTokens)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return accountTokens, nil
+
+}
+
+func (c *client) GetAccountTransactions(address string) ([]*AccountTransaction, int, error) {
+
+	endpoint := "account/txs"
+
+	params := make(map[string]string)
+	params["address"] = address
+
+	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	resp, err := c.apiClient.Get(url.String())
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var accountTransactions []*AccountTransaction
+	err = json.Unmarshal(resp.Data, &accountTransactions)
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return accountTransactions, resp.NextPage, nil
+
+}
+
+func (c *client) GetTokenHolders(contractAddress string) ([]string, error) {
+
+	endpoint := "token/holders"
+
+	params := make(map[string]string)
+	params["contract_address"] = contractAddress
+
+	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.apiClient.Get(url.String())
+	if err != nil {
+		return nil, err
+
+	}
+
+	var addrs []string
+	err = json.Unmarshal(resp.Data, &addrs)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return addrs, nil
+}
+
 type Price struct {
 	Price     float64   `json:"price"`
 	Symbol    string    `json:"symbol"`
@@ -72,31 +183,59 @@ type Price struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (c *client) GetTokenMetadata() {
-	_ = "token/metadata"
+func (c *client) GetTokenPrice(contractAddress string) (*Price, error) {
+
+	endpoint := "token/price"
+
+	params := make(map[string]string)
+	params["contract_address"] = contractAddress
+
+	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.apiClient.Get(url.String())
+	if err != nil {
+		return nil, err
+	}
+
+	var price Price
+
+	err = json.Unmarshal(resp.Data, &price)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &price, nil
 }
 
-func (c *client) GetAccountTokens() {
+func (c *client) GetTokenPriceHistory(contractAddress string) ([]*Price, error) {
 
-	_ = "account/tokens"
-}
+	endpoint := "token/price/history"
 
-func (c *client) GetAccountTransactions() {
+	params := make(map[string]string)
+	params["contract_address"] = contractAddress
 
-	_ = "account/txs"
-}
+	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-func (c *client) GetTokenHolders() {
+	resp, err := c.apiClient.Get(url.String())
+	if err != nil {
+		return nil, err
+	}
 
-	_ = "token/holders"
-}
+	var prices []*Price
 
-func (c *client) GetTokenPrice() {
+	err = json.Unmarshal(resp.Data, &prices)
 
-	_ = "token/price"
-}
+	if err != nil {
+		return nil, err
+	}
 
-func (c *client) GetTokenPriceHistory() {
+	return prices, nil
 
-	_ = "token/price/history"
 }
