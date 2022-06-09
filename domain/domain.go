@@ -2,7 +2,7 @@ package domain
 
 import (
 	"encoding/json"
-	"github.com/jxlwqq/chainbase-client-go/api"
+	"github.com/jxlwqq/chainbase-client-go/web3api"
 	"time"
 )
 
@@ -13,12 +13,12 @@ type Client interface {
 }
 
 type client struct {
-	apiClient *api.Client
+	web3APIClient *web3api.Client
 }
 
-func New(apiClient *api.Client) Client {
+func New(web3APIClient *web3api.Client) Client {
 	return &client{
-		apiClient: apiClient,
+		web3APIClient: web3APIClient,
 	}
 }
 
@@ -37,9 +37,9 @@ func (c *client) GetENSRecords(domain string) (*ENSRecord, error) {
 	endpoint := "ens/records"
 	params := make(map[string]string)
 	params["domain"] = domain
-	u, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	u, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 
-	resp, err := c.apiClient.Get(u.String())
+	resp, err := c.web3APIClient.Get(u.String())
 
 	var ensRecord ENSRecord
 	err = json.Unmarshal(resp.Data, &ensRecord)
@@ -53,9 +53,9 @@ func (c *client) GetENSReverse(address string) ([]ENSRecord, error) {
 	endpoint := "ens/reverse"
 	params := make(map[string]string)
 	params["address"] = address
-	u, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	u, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 
-	resp, err := c.apiClient.Get(u.String())
+	resp, err := c.web3APIClient.Get(u.String())
 
 	var ensRecords []ENSRecord
 
@@ -69,9 +69,9 @@ func (c *client) GetAccountENS(address string) ([]ENSRecord, error) {
 	endpoint := "account/ens"
 	params := make(map[string]string)
 	params["address"] = address
-	u, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	u, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 
-	resp, err := c.apiClient.Get(u.String())
+	resp, err := c.web3APIClient.Get(u.String())
 
 	var ensRecords []ENSRecord
 

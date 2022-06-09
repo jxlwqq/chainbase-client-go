@@ -2,7 +2,7 @@ package token
 
 import (
 	"encoding/json"
-	"github.com/jxlwqq/chainbase-client-go/api"
+	"github.com/jxlwqq/chainbase-client-go/web3api"
 	"time"
 )
 
@@ -16,11 +16,13 @@ type Client interface {
 	GetTokenPriceHistory(contractAddress string) ([]*Price, error)
 }
 type client struct {
-	apiClient *api.Client
+	web3APIClient *web3api.Client
 }
 
-func New(apiClient *api.Client) Client {
-	return &client{apiClient: apiClient}
+func New(web3APIClient *web3api.Client) Client {
+	return &client{
+		web3APIClient: web3APIClient,
+	}
 }
 
 type Metadata struct {
@@ -68,13 +70,13 @@ func (c *client) GetBalance(address string) (string, error) {
 	params := make(map[string]string)
 	params["address"] = address
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 
 	if err != nil {
 		return "", err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return "", err
 	}
@@ -92,12 +94,12 @@ func (c *client) GetTokenMetadata(contractAddress string) (*Metadata, error) {
 	params := make(map[string]string)
 	params["contract_address"] = contractAddress
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 	}
@@ -118,12 +120,12 @@ func (c *client) GetAccountTokens(address string) ([]*AccountToken, error) {
 	params := make(map[string]string)
 	params["address"] = address
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 	}
@@ -146,12 +148,12 @@ func (c *client) GetAccountTransactions(address string) ([]*AccountTransaction, 
 	params := make(map[string]string)
 	params["address"] = address
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, 0, err
 	}
@@ -174,13 +176,13 @@ func (c *client) GetTokenHolders(contractAddress string) ([]string, error) {
 	params := make(map[string]string)
 	params["contract_address"] = contractAddress
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 
@@ -210,12 +212,12 @@ func (c *client) GetTokenPrice(contractAddress string) (*Price, error) {
 	params := make(map[string]string)
 	params["contract_address"] = contractAddress
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 	}
@@ -238,12 +240,12 @@ func (c *client) GetTokenPriceHistory(contractAddress string) ([]*Price, error) 
 	params := make(map[string]string)
 	params["contract_address"] = contractAddress
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 	}

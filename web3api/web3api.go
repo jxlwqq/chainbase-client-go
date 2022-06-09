@@ -1,4 +1,4 @@
-package api
+package web3api
 
 import (
 	"encoding/json"

@@ -1,14 +1,15 @@
 package chainbase
 
 import (
-	"github.com/jxlwqq/chainbase-client-go/api"
 	"github.com/jxlwqq/chainbase-client-go/basic"
 	"github.com/jxlwqq/chainbase-client-go/bsc"
+	"github.com/jxlwqq/chainbase-client-go/chainnetwork"
 	"github.com/jxlwqq/chainbase-client-go/domain"
 	"github.com/jxlwqq/chainbase-client-go/ethereum"
 	"github.com/jxlwqq/chainbase-client-go/nft"
 	"github.com/jxlwqq/chainbase-client-go/polygon"
 	"github.com/jxlwqq/chainbase-client-go/token"
+	"github.com/jxlwqq/chainbase-client-go/web3api"
 	"net/http"
 )
 
@@ -22,15 +23,16 @@ type Client struct {
 	BSC      bsc.Client
 }
 
-func New(httpClient *http.Client, chainID api.ChainID, apiKey string) *Client {
-	apiClient := api.New(httpClient, chainID, apiKey)
+func New(httpClient *http.Client, chainID web3api.ChainID, web3APIKey string, chainNetworkAPIKey string) *Client {
+	web3APIClient := web3api.New(httpClient, chainID, web3APIKey)
+	chainNetworkClient := chainnetwork.New(chainNetworkAPIKey)
 	return &Client{
-		Basic:    basic.New(apiClient),
-		NFT:      nft.New(apiClient),
-		Token:    token.New(apiClient),
-		Domain:   domain.New(apiClient),
-		Ethereum: ethereum.New(apiClient),
-		Polygon:  polygon.New(apiClient),
-		BSC:      bsc.New(apiClient),
+		Basic:    basic.New(web3APIClient),
+		NFT:      nft.New(web3APIClient),
+		Token:    token.New(web3APIClient),
+		Domain:   domain.New(web3APIClient),
+		Ethereum: ethereum.New(chainNetworkClient),
+		Polygon:  polygon.New(chainNetworkClient),
+		BSC:      bsc.New(chainNetworkClient),
 	}
 }

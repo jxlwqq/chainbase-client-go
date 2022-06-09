@@ -2,7 +2,7 @@ package basic
 
 import (
 	"encoding/json"
-	"github.com/jxlwqq/chainbase-client-go/api"
+	"github.com/jxlwqq/chainbase-client-go/web3api"
 	"math/big"
 	"time"
 )
@@ -10,18 +10,18 @@ import (
 type Client interface {
 	GetLastBlock() (*LastBlock, error)
 	GetBlockDetail(number big.Int) (*BlockDetail, error)
-	GetAddressGasFee(address string, pagination *api.Pagination, filters *api.BasicFilters) ([]*AddressGasFee, int, error)
-	GetContractEvents(contractAddress string, pagination *api.Pagination, filters *api.BasicFilters) ([]*ContractEvent, int, error)
+	GetAddressGasFee(address string, pagination *web3api.Pagination, filters *web3api.BasicFilters) ([]*AddressGasFee, int, error)
+	GetContractEvents(contractAddress string, pagination *web3api.Pagination, filters *web3api.BasicFilters) ([]*ContractEvent, int, error)
 	RunContractFunction()
 }
 
 type client struct {
-	apiClient *api.Client
+	web3APIClient *web3api.Client
 }
 
-func New(apiClient *api.Client) Client {
+func New(web3APIClient *web3api.Client) Client {
 	return &client{
-		apiClient: apiClient,
+		web3APIClient: web3APIClient,
 	}
 }
 
@@ -34,9 +34,17 @@ func (c *client) GetLastBlock() (*LastBlock, error) {
 
 	endpoint := "block/number/latest"
 
-	u, err := c.apiClient.MakeURL(endpoint, nil, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, nil, nil, nil)
 
-	resp, err := c.apiClient.Get(u.String())
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.web3APIClient.Get(url.String())
+
+	if err != nil {
+		return nil, err
+	}
 
 	var lastBlock LastBlock
 	err = json.Unmarshal(resp.Data, &lastBlock)
@@ -76,9 +84,17 @@ func (c *client) GetBlockDetail(number big.Int) (*BlockDetail, error) {
 	params := make(map[string]string)
 	params["number"] = number.String()
 
-	u, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 
-	resp, err := c.apiClient.Get(u.String())
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.web3APIClient.Get(url.String())
+
+	if err != nil {
+		return nil, err
+	}
 
 	var blockDetail BlockDetail
 	err = json.Unmarshal(resp.Data, &blockDetail)
@@ -92,16 +108,24 @@ type AddressGasFee struct {
 	Fee             uint64  `json:"fee"`
 }
 
-func (c *client) GetAddressGasFee(address string, pagination *api.Pagination, filters *api.BasicFilters) ([]*AddressGasFee, int, error) {
+func (c *client) GetAddressGasFee(address string, pagination *web3api.Pagination, filters *web3api.BasicFilters) ([]*AddressGasFee, int, error) {
 
 	endpoint := "account/fees/history"
 
 	params := make(map[string]string)
 	params["address"] = address
 
-	u, err := c.apiClient.MakeURL(endpoint, params, pagination, filters)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, pagination, filters)
 
-	resp, err := c.apiClient.Get(u.String())
+	if err != nil {
+		return nil, 0, err
+	}
+
+	resp, err := c.web3APIClient.Get(url.String())
+
+	if err != nil {
+		return nil, 0, err
+	}
 
 	var addressGasFee []*AddressGasFee
 	err = json.Unmarshal(resp.Data, &addressGasFee)
@@ -117,16 +141,24 @@ type ContractEvent struct {
 	Function         string  `json:"function"`
 }
 
-func (c *client) GetContractEvents(contractAddress string, pagination *api.Pagination, filters *api.BasicFilters) ([]*ContractEvent, int, error) {
+func (c *client) GetContractEvents(contractAddress string, pagination *web3api.Pagination, filters *web3api.BasicFilters) ([]*ContractEvent, int, error) {
 
 	endpoint := "contract/events"
 
 	params := make(map[string]string)
 	params["contract_address"] = contractAddress
 
-	u, err := c.apiClient.MakeURL(endpoint, params, pagination, filters)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, pagination, filters)
 
-	resp, err := c.apiClient.Get(u.String())
+	if err != nil {
+		return nil, 0, err
+	}
+
+	resp, err := c.web3APIClient.Get(url.String())
+
+	if err != nil {
+		return nil, 0, err
+	}
 
 	var contractEvents []*ContractEvent
 

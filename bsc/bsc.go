@@ -1,14 +1,17 @@
 package bsc
 
-import "github.com/jxlwqq/chainbase-client-go/api"
+import (
+	"github.com/jxlwqq/chainbase-client-go/chainnetwork"
+)
 
 type Client interface {
 }
-
 type client struct {
-	apiClient *api.Client
+	chainNetworkClient *chainnetwork.Client
 }
 
-func New(apiClient *api.Client) Client {
-	return &client{apiClient}
+func New(chainNetworkClient *chainnetwork.Client) Client {
+	return &client{
+		chainNetworkClient: chainNetworkClient,
+	}
 }

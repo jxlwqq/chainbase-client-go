@@ -2,7 +2,7 @@ package nft
 
 import (
 	"encoding/json"
-	"github.com/jxlwqq/chainbase-client-go/api"
+	"github.com/jxlwqq/chainbase-client-go/web3api"
 	"math/big"
 	"time"
 )
@@ -17,11 +17,13 @@ type Client interface {
 	GetNFTFloorPrice(contractAddress string) (*FloorPrice, error)
 }
 type client struct {
-	apiClient *api.Client
+	web3APIClient *web3api.Client
 }
 
-func New(apiClient *api.Client) Client {
-	return &client{apiClient}
+func New(web3APIClient *web3api.Client) Client {
+	return &client{
+		web3APIClient: web3APIClient,
+	}
 }
 
 type NFT struct {
@@ -39,9 +41,9 @@ func (c *client) SearchNFTs(name string, contractAddress string) ([]*NFT, error)
 		params["contract_address"] = contractAddress
 	}
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 	}
@@ -69,13 +71,13 @@ func (c *client) GetAccountNFTs(address string) ([]*AccountNFT, error) {
 	params := make(map[string]string)
 	params["address"] = address
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 
 	var accountNFTs []*AccountNFT
 
@@ -110,12 +112,12 @@ func (c *client) GetNFTTransfers(contractAddress string, tokenID *big.Int) ([]*T
 		params["token_id"] = tokenID.String()
 	}
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 
 	if err != nil {
 		return nil, err
@@ -148,12 +150,12 @@ func (c *client) GetNFTMetadata(contractAddress string, tokenID *big.Int) (*Meta
 	params["contract_address"] = contractAddress
 	params["token_id"] = tokenID.String()
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 	}
@@ -172,12 +174,12 @@ func (c *client) GetNFTOwner(contractAddress string, tokenID *big.Int) (string, 
 	params["contract_address"] = contractAddress
 	params["token_id"] = tokenID.String()
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return "", err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return "", err
 	}
@@ -213,12 +215,12 @@ func (c *client) GetNFTOwnerHistory(contractAddress string, tokenID *big.Int) ([
 	params["contract_address"] = contractAddress
 	params["token_id"] = tokenID.String()
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 	}
@@ -245,12 +247,12 @@ func (c *client) GetNFTFloorPrice(contractAddress string) (*FloorPrice, error) {
 	params := make(map[string]string)
 	params["contract_address"] = contractAddress
 
-	url, err := c.apiClient.MakeURL(endpoint, params, nil, nil)
+	url, err := c.web3APIClient.MakeURL(endpoint, params, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.apiClient.Get(url.String())
+	resp, err := c.web3APIClient.Get(url.String())
 	if err != nil {
 		return nil, err
 	}
