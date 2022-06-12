@@ -3,6 +3,7 @@ package chainbase
 import (
 	"github.com/jxlwqq/chainbase-client-go/basic"
 	"github.com/jxlwqq/chainbase-client-go/bsc"
+	"github.com/jxlwqq/chainbase-client-go/chain"
 	"github.com/jxlwqq/chainbase-client-go/chainnetwork"
 	"github.com/jxlwqq/chainbase-client-go/domain"
 	"github.com/jxlwqq/chainbase-client-go/ethereum"
@@ -23,9 +24,9 @@ type Client struct {
 	BSC      bsc.Client
 }
 
-func New(httpClient *http.Client, chainID web3api.ChainID, web3APIKey string, chainNetworkAPIKey string) *Client {
+func New(httpClient *http.Client, chainID chain.ID, web3APIKey string, chainNetworkAPIKey string) *Client {
 	web3APIClient := web3api.New(httpClient, chainID, web3APIKey)
-	chainNetworkClient := chainnetwork.New(chainNetworkAPIKey)
+	chainNetworkClient := chainnetwork.New(httpClient, chainID, chainNetworkAPIKey)
 	return &Client{
 		Basic:    basic.New(web3APIClient),
 		NFT:      nft.New(web3APIClient),

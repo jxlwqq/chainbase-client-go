@@ -2,6 +2,7 @@ package web3api
 
 import (
 	"encoding/json"
+	"github.com/jxlwqq/chainbase-client-go/chain"
 	"io"
 	"net/http"
 	"net/url"
@@ -10,29 +11,10 @@ import (
 
 const defaultBaseURL = "https://api.chainbase.online/v1/"
 
-type ChainID int
-
-func (c ChainID) String() string {
-	return strconv.Itoa(int(c))
-}
-
-const (
-	EthereumMainnet ChainID = 1
-	EthereumRinkeby ChainID = 4
-	EthereumGorli   ChainID = 5
-	EthereumKovan   ChainID = 42
-
-	PolygonMainnet       ChainID = 137
-	PolygonMumbaiTestnet ChainID = 80001
-
-	BSCMainnet ChainID = 56
-	BSCTestnet ChainID = 97
-)
-
 type Client struct {
 	httpClient *http.Client
-	ChainID    ChainID
-	APIKey     string
+	chainID    chain.ID
+	apiKey     string
 }
 
 type Response struct {
@@ -54,11 +36,11 @@ type BasicFilters struct {
 	ToBlock       int64 `json:"to_block"`
 }
 
-func New(httpClient *http.Client, chainID ChainID, apiKey string) *Client {
+func New(httpClient *http.Client, chainID chain.ID, apiKey string) *Client {
 	return &Client{
 		httpClient: httpClient,
-		ChainID:    chainID,
-		APIKey:     apiKey,
+		chainID:    chainID,
+		apiKey:     apiKey,
 	}
 }
 
@@ -66,7 +48,7 @@ func (c *Client) MakeURL(endpoint string, parameters map[string]string, paginati
 	u, _ := url.Parse(defaultBaseURL + endpoint)
 
 	q := u.Query()
-	q.Set("chain_id", c.ChainID.String())
+	q.Set("chain_id", c.chainID.String())
 
 	for k, v := range parameters {
 		q.Set(k, v)
@@ -117,7 +99,7 @@ func (c *Client) Do(method string, url string, body io.Reader) (*Response, error
 	req, _ := http.NewRequest(method, url, body)
 
 	req.Header.Set("Content-Type", "application/json;")
-	req.Header.Set("X-API-KEY", c.APIKey)
+	req.Header.Set("X-API-KEY", c.apiKey)
 
 	resp, err := c.httpClient.Do(req)
 
