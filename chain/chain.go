@@ -14,8 +14,8 @@ const (
 	EthereumGorli   ID = 5
 	EthereumKovan   ID = 42
 
-	PolygonMainnet       ID = 137
-	PolygonMumbaiTestnet ID = 80001
+	PolygonMainnet ID = 137
+	PolygonMumbai  ID = 80001
 
 	BSCMainnet ID = 56
 	BSCTestnet ID = 97

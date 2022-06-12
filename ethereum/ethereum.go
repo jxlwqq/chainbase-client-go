@@ -15,3 +15,8 @@ func New(chainNetworkClient *chainnetwork.Client) Client {
 		chainNetworkClient: chainNetworkClient,
 	}
 }
+
+func NetVersion() {
+	_ = "net_version"
+	_ = "2.0"
+}
